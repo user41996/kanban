@@ -105,7 +105,7 @@ Vue.component('table_1',{
             tab.editButton = false;
             this.column_1.push(tab);
             this.column_1.splice(this.column_1.indexOf(tab), 1);
-            tab.edit = new Date().toLocaleString();
+            tab.edit = new Date();
         }
     }
 })
@@ -198,7 +198,7 @@ Vue.component('table_2',{
             tab.editButton = false;
             this.column_2.push(tab);
             this.column_2.splice(this.column_2.indexOf(tab), 1);
-            tab.edit = new Date().toLocaleString();
+            tab.edit = new Date();
         }
     }
 })
@@ -302,6 +302,25 @@ Vue.component('table_3',{
         return{
         }
     },
+    methods: {
+        nextTab(tab){
+            this.column_3.splice(this.column_3.indexOf(tab), 1);
+            eventBus.$emit('addColumn_4', tab);
+        },
+        refundTab(tab){
+            tab.reason.push(this.reason)
+            tab.refund = false
+            this.column_3.splice(this.column_3.indexOf(tab), 1);
+            eventBus.$emit('addColumn_2', tab);
+            this.reason = '';
+        },
+        updateTab(tab){
+            tab.editButton = false;
+            this.column_3.push(tab);
+            this.column_3.splice(this.column_3.indexOf(tab), 1);
+            tab.edit = new Date();
+        },
+    }
 })
 
 Vue.component('table_4',{
