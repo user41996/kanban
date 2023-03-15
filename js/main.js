@@ -92,6 +92,21 @@ Vue.component('table_1',{
         return{
 
         }
+    },
+    methods:{
+        nextTab(tab){
+            this.column_1.splice(this.column_1.indexOf(tab), 1);
+            eventBus.$emit('addColumn_2', tab);
+        },
+        deleteTab(tab){
+            this.column_1.splice(this.column_1.indexOf(tab), 1);
+        },
+        updateTab(tab){
+            tab.editButton = false;
+            this.column_1.push(tab);
+            this.column_1.splice(this.column_1.indexOf(tab), 1);
+            tab.edit = new Date().toLocaleString();
+        }
     }
 })
 
@@ -345,12 +360,6 @@ Vue.component('newBoard', {
                                         <textarea id="description" v-model="description" rows="5" columns="10" required maxlength="60"></textarea>
                                         <label for="deadline">Дедлайн</label>
                                         <input id="deadline" type="date" v-model="deadline" placeholder="дд.мм.гггг" required>        
-                                        <label for="priority">Приоретет:</label>
-                                        <select id="priority" v-model.number="priori">
-                                            <option>1</option>
-                                            <option>2</option>
-                                            <option>3</option>
-                                        </select>
                                         <button type="submit">Создать</button>
                                     </form>
                                 </div>
