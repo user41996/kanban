@@ -279,6 +279,14 @@ Vue.component('table_2',{
 })
 
 Vue.component('table_3',{
+    props: {
+        column_3: {
+            type: Array,
+        },
+        tab: {
+            type: Object
+        },
+    },
     template:`
         <div class="tab">
             <h2>Тестирование</h2>
@@ -375,6 +383,7 @@ Vue.component('table_3',{
     `,
     data(){
         return{
+            reason:[],
         }
     },
     methods: {
@@ -399,6 +408,14 @@ Vue.component('table_3',{
 })
 
 Vue.component('table_4',{
+    props: {
+        column_4: {
+            type: Array,
+        },
+        tab: {
+            type: Object
+        },
+    },
     template:`
         <div class="tab">
             <h2>Выполненные задачи</h2>
