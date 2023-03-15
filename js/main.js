@@ -363,11 +363,38 @@ Vue.component('newBoard', {
     `,
     data(){
         return{
+            title: null,
+            description: null,
+            date:null,
+            deadline: null,
+            show: false,
+            reason: [],
         }
     },
     methods:{
-        
-    }
+        onSubmit(){
+            let tab = {
+                title: this.title,
+                description: this.description,
+                date: new Date(),
+                deadline: this.deadline,
+                edit: null,
+                editButton: false,
+                refund: false,
+                term: true,
+                reason: [],
+            }
+            eventBus.$emit('addColumn_1', tab);
+            this.title = null;
+            this.description = null;
+            this.date = null;
+            this.deadline = null;
+            this.show = false;
+        },
+        close(){
+            this.show = false;
+        }
+        }
 })
 
 let app = new Vue({
