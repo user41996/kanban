@@ -188,6 +188,18 @@ Vue.component('table_2',{
         return{
 
         }
+    },
+    methods:{
+        nextTab(tab){
+            this.column_2.splice(this.column_2.indexOf(tab), 1);
+            eventBus.$emit('addColumn_3', tab);
+        },
+        updateTab(tab){
+            tab.editButton = false;
+            this.column_2.push(tab);
+            this.column_2.splice(this.column_2.indexOf(tab), 1);
+            tab.edit = new Date().toLocaleString();
+        }
     }
 })
 
