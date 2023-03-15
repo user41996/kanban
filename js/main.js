@@ -77,6 +77,14 @@ Vue.component('board', {
 
 
 Vue.component('table_1',{
+    props: {
+        column_1: {
+            type: Array,
+        },
+        tab: {
+            type: Object
+        },
+    },
     template:`
         <div class="tab">
             <h2>Запланированные задачи</h2>
@@ -170,6 +178,14 @@ Vue.component('table_1',{
 })
 
 Vue.component('table_2',{
+    props: {
+        column_2: {
+            type: Array,
+        },
+        tab: {
+            type: Object
+        },
+    },
     template:`
         <div class="tab">
             <h2>Задачи в работе</h2>
