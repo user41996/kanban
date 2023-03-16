@@ -75,7 +75,6 @@ Vue.component('board', {
     }
 })
 
-
 Vue.component('table_1',{
     props: {
         column_1: {
@@ -89,49 +88,7 @@ Vue.component('table_1',{
         <div class="tab">
             <h2>Запланированные задачи</h2>
             <ul class="tab-li">
-                <li v-for="tab in column_1" v-if="tab.priori == 1">
-                    <div class="separator"></div>
-                    <a @click="deleteTab(tab)">Удалить</a> &emsp; <a @click="tab.editButton = true">Редактировать</a><br>
-                    <p class="tab-title">{{tab.title}}</p>
-                    <ul class="tab-task">
-                        <li>Описание: {{tab.description}}</li>
-                        <li>Дата создания: {{tab.date}}</li>
-                        <li>Дедлайн: {{tab.deadline}}</li>
-                        <li v-if="tab.edit != null">Последние изменение: {{tab.edit}}</li>
-                        <li v-if="tab.editButton === true">
-                            <form @submit.prevent="updateTab(tab)">
-                                <label for="title">Новый заголовок</label>
-                                <input id="title" type="text" v-model="tab.title" maxlength="30" placeholder="Заголовок">
-                                <label for="description">Новое описание:</label> 
-                                <textarea id="description" v-model="tab.description" cols="20" rows="5"></textarea>
-                                <input type="submit" value="Редактировать">
-                            </form>                      
-                        </li>
-                    </ul>
-                    <a @click="nextTab(tab)">Следующая колонка</a>
-                </li>
-                <li v-for="tab in column_1" v-if="tab.priori == 2">
-                    <div class="separator"></div>
-                    <a @click="deleteTab(tab)">Удалить</a> &emsp; <a @click="tab.editButton = true">Редактировать</a><br>
-                    <p class="tab-title">{{tab.title}}</p>
-                    <ul class="tab-task">
-                        <li>Описание: {{tab.description}}</li>
-                        <li>Дата создания: {{tab.date}}</li>
-                        <li>Дедлайн: {{tab.deadline}}</li>
-                        <li v-if="tab.edit != null">Последние изменение: {{tab.edit}}</li>
-                        <li v-if="tab.editButton === true">
-                            <form @submit.prevent="updateTab(tab)">
-                                <label for="title">Новый заголовок</label>
-                                <input id="title" type="text" v-model="tab.title" maxlength="30" placeholder="Заголовок">
-                                <label for="description">Новое описание:</label> 
-                                <textarea id="description" v-model="tab.description" cols="20" rows="5"></textarea>
-                                <input type="submit" value="Редактировать">
-                            </form>                      
-                        </li>
-                    </ul>
-                    <a @click="nextTab(tab)">Следующая колонка</a>
-                </li>
-                <li v-for="tab in column_1" v-if="tab.priori == 3">
+                <li v-for="tab in column_1">
                     <div class="separator"></div>
                     <a @click="deleteTab(tab)">Удалить</a> &emsp; <a @click="tab.editButton = true">Редактировать</a><br>
                     <p class="tab-title">{{tab.title}}</p>
@@ -155,12 +112,7 @@ Vue.component('table_1',{
             </ul>
         </div>
     `,
-    data(){
-        return{
-
-        }
-    },
-    methods:{
+    methods: {
         nextTab(tab){
             this.column_1.splice(this.column_1.indexOf(tab), 1);
             eventBus.$emit('addColumn_2', tab);
@@ -172,7 +124,7 @@ Vue.component('table_1',{
             tab.editButton = false;
             this.column_1.push(tab);
             this.column_1.splice(this.column_1.indexOf(tab), 1);
-            tab.edit = new Date();
+            tab.edit = new Date().toLocaleString();
         }
     }
 })
@@ -190,51 +142,7 @@ Vue.component('table_2',{
         <div class="tab">
             <h2>Задачи в работе</h2>
             <ul class="tab-li">
-                <li v-for="tab in column_2" v-if="tab.priori == 1">
-                    <div class="separator"></div>
-                    <a @click="tab.editButton = true">Редактировать</a><br>
-                    <p class="tab-title">{{tab.title}}</p>
-                    <ul class="tab-task">
-                        <li>Описание: {{tab.description}}</li>
-                        <li>Дата создания: {{tab.date}}</li>
-                        <li>Дедлайн: {{tab.deadline}}</li>
-                        <li v-if="tab.reason != null" v-for="res in tab.reason">Проблема: {{res}}</li>
-                        <li v-if="tab.edit != null">Последние изменение: {{tab.edit}}</li>
-                        <li v-if="tab.editButton === true">
-                            <form @submit.prevent="updateTab(tab)">
-                                <label for="title">Новый заголовок</label>
-                                <input id="title" type="text" v-model="tab.title" maxlength="30" placeholder="Заголовок">
-                                <label for="description">Новое описание:</label> 
-                                <textarea id="description" v-model="tab.description" cols="20" rows="5"></textarea>
-                                <input type="submit" value="Редактировать">
-                            </form>                      
-                        </li>
-                    </ul>
-                    <a @click="nextTab(tab)">Следующая колонка</a>
-                </li>
-                <li v-for="tab in column_2" v-if="tab.priori == 2">
-                    <div class="separator"></div>
-                    <a @click="tab.editButton = true">Редактировать</a><br>
-                    <p class="tab-title">{{tab.title}}</p>
-                    <ul class="tab-task">
-                        <li>Описание: {{tab.description}}</li>
-                        <li>Дата создания: {{tab.date}}</li>
-                        <li>Дедлайн: {{tab.deadline}}</li>
-                        <li v-if="tab.reason != null" v-for="res in tab.reason">Проблема: {{res}}</li>
-                        <li v-if="tab.edit != null">Последние изменение: {{tab.edit}}</li>
-                        <li v-if="tab.editButton === true">
-                            <form @submit.prevent="updateTab(tab)">
-                                <label for="title">Новый заголовок</label>
-                                <input id="title" type="text" v-model="tab.title" maxlength="30" placeholder="Заголовок">
-                                <label for="description">Новое описание:</label> 
-                                <textarea id="description" v-model="tab.description" cols="20" rows="5"></textarea>
-                                <input type="submit" value="Редактировать">
-                            </form>                      
-                        </li>
-                    </ul>
-                    <a @click="nextTab(tab)">Следующая колонка</a>
-                </li>
-                <li v-for="tab in column_2" v-if="tab.priori == 3">
+                <li v-for="tab in column_2">
                     <div class="separator"></div>
                     <a @click="tab.editButton = true">Редактировать</a><br>
                     <p class="tab-title">{{tab.title}}</p>
@@ -259,11 +167,6 @@ Vue.component('table_2',{
             </ul>
         </div>
     `,
-    data(){
-        return{
-
-        }
-    },
     methods:{
         nextTab(tab){
             this.column_2.splice(this.column_2.indexOf(tab), 1);
@@ -273,7 +176,7 @@ Vue.component('table_2',{
             tab.editButton = false;
             this.column_2.push(tab);
             this.column_2.splice(this.column_2.indexOf(tab), 1);
-            tab.edit = new Date();
+            tab.edit = new Date().toLocaleString();
         }
     }
 })
@@ -281,7 +184,7 @@ Vue.component('table_2',{
 Vue.component('table_3',{
     props: {
         column_3: {
-            type: Array,
+            type: Array
         },
         tab: {
             type: Object
@@ -291,65 +194,7 @@ Vue.component('table_3',{
         <div class="tab">
             <h2>Тестирование</h2>
             <ul class="tab-li">
-                <li v-for="tab in column_3" v-if="tab.priori == 1">
-                    <div class="separator"></div>
-                    <a @click="tab.editButton = true">Редактировать</a><br>
-                    <p class="tab-title">{{tab.title}}</p>
-                    <ul class="tab-task">
-                        <li>Описание: {{tab.description}}</li>
-                        <li>Дата создания: {{tab.date}}</li>
-                        <li>Дедлайн: {{tab.deadline}}</li>
-                        <li v-if="tab.reason != null" v-for="res in tab.reason">Проблема: {{res}}</li>
-                        <li v-if="tab.edit != null">Последние изменение: {{tab.edit}}</li>
-                        <li v-if="tab.editButton === true">
-                            <form @submit.prevent="updateTab(tab)">
-                                <label for="title">Новый заголовок</label>
-                                <input id="title" type="text" v-model="tab.title" maxlength="30" placeholder="Заголовок">
-                                <label for="description">Новое описание:</label> 
-                                <textarea id="description" v-model="tab.description" cols="20" rows="5"></textarea>
-                                <input type="submit" value="Редактировать">
-                            </form>                      
-                        </li>
-                        <li v-if="tab.refund">
-                            <form @submit.prevent="refundTab(tab)">
-                                <label for="reason">Причина: &emsp;</label> 
-                                <textarea id="reason" v-model="reason"></textarea>
-                                <input type="submit" value="Отправить">
-                            </form>
-                        </li>
-                    </ul>
-                    <a @click="tab.refund = true">Вернуть</a> &emsp; <a @click="nextTab(tab)">Следующая колонка</a>
-                </li>
-                <li v-for="tab in column_3" v-if="tab.priori == 2">
-                    <div class="separator"></div>
-                    <a @click="tab.editButton = true">Редактировать</a><br>
-                    <p class="tab-title">{{tab.title}}</p>
-                    <ul class="tab-task">
-                        <li>Описание: {{tab.description}}</li>
-                        <li>Дата создания: {{tab.date}}</li>
-                        <li>Дедлайн: {{tab.deadline}}</li>
-                        <li v-if="tab.reason != null" v-for="res in tab.reason">Проблема: {{res}}</li>
-                        <li v-if="tab.edit != null">Последние изменение: {{tab.edit}}</li>
-                        <li v-if="tab.editButton === true">
-                            <form @submit.prevent="updateTab(tab)">
-                                <label for="title">Новый заголовок</label>
-                                <input id="title" type="text" v-model="tab.title" maxlength="30" placeholder="Заголовок">
-                                <label for="description">Новое описание:</label> 
-                                <textarea id="description" v-model="tab.description" cols="20" rows="5"></textarea>
-                                <input type="submit" value="Редактировать">
-                            </form>                      
-                        </li>
-                        <li v-if="tab.refund">
-                            <form @submit.prevent="refundTab(tab)">
-                                <label for="reason">Причина: &emsp;</label> 
-                                <textarea id="reason" v-model="reason"></textarea>
-                                <input type="submit" value="Отправить">
-                            </form>
-                        </li>
-                    </ul>
-                    <a @click="tab.refund = true">Вернуть</a> &emsp; <a @click="nextTab(tab)">Следующая колонка</a>
-                </li>
-                <li v-for="tab in column_3" v-if="tab.priori == 3">
+                <li v-for="tab in column_3">
                     <div class="separator"></div>
                     <a @click="tab.editButton = true">Редактировать</a><br>
                     <p class="tab-title">{{tab.title}}</p>
@@ -402,7 +247,7 @@ Vue.component('table_3',{
             tab.editButton = false;
             this.column_3.push(tab);
             this.column_3.splice(this.column_3.indexOf(tab), 1);
-            tab.edit = new Date();
+            tab.edit = new Date().toLocaleString();
         },
     }
 })
@@ -420,31 +265,7 @@ Vue.component('table_4',{
         <div class="tab">
             <h2>Выполненные задачи</h2>
             <ul class="tab-li">
-                <li v-for="tab in column_4" v-if="tab.priori == 1">
-                    <div class="separator"></div>
-                    <p class="tab-title">{{tab.title}}</p>
-                    <ul class="tab-task">
-                        <li>Описание: {{tab.description}}</li>
-                        <li>Дата создания: {{tab.date}}</li>
-                        <li>Дедлайн: {{tab.deadline}}</li>
-                        <li v-if="tab.edit != null">Последние изменение: {{tab.edit}}</li>
-                        <li v-if="tab.term">Завершено в срок</li>
-                        <li v-else>В срок не завершено</li>
-                    </ul>
-                </li>
-                <li v-for="tab in column_4" v-if="tab.priori == 2">
-                    <div class="separator"></div>
-                    <p class="tab-title">{{tab.title}}</p>
-                    <ul class="tab-task">
-                        <li>Описание: {{tab.description}}</li>
-                        <li>Дата создания: {{tab.date}}</li>
-                        <li>Дедлайн: {{tab.deadline}}</li>
-                        <li v-if="tab.edit != null">Последние изменение: {{tab.edit}}</li>
-                        <li v-if="tab.term">Завершено в срок</li>
-                        <li v-else>В срок не завершено</li>
-                    </ul>
-                </li>
-                <li v-for="tab in column_4" v-if="tab.priori == 3">
+                <li v-for="tab in column_4">
                     <div class="separator"></div>
                     <p class="tab-title">{{tab.title}}</p>
                     <ul class="tab-task">
@@ -508,7 +329,7 @@ Vue.component('newBoard', {
             let tab = {
                 title: this.title,
                 description: this.description,
-                date: new Date(),
+                date: new Date().toLocaleDateString().split('.').reverse().join('-'),
                 deadline: this.deadline,
                 edit: null,
                 editButton: false,
@@ -526,10 +347,11 @@ Vue.component('newBoard', {
         close(){
             this.show = false;
         }
-        }
+    }
 })
+
 
 let app = new Vue({
     el: '#app',
+    
 })
-
