@@ -5,8 +5,8 @@ Vue.component('board', {
         <div class="tabs">
             <newBoard></newBoard>
             <div class="tabs-wrap">
-                <table_1 :column_1="column_1"></table_1>
-                <table_2 :column_2="column_2"></table_2>
+                <table_1 :column_1="column_1" draggable @dragstart="startDrag($event, item)"></table_1>
+                <table_2 :column_2="column_2"  @drop="onDrop($event, index)" @dragover.prevent @dragenter.prevent></table_2>
                 <table_3 :column_3="column_3"></table_3>
                 <table_4 :column_4="column_4"></table_4>
             </div>   
@@ -72,6 +72,17 @@ Vue.component('board', {
         saveTab_4(){
             localStorage.setItem('column_4', JSON.stringify(this.column_4));
         },
+        startDrag(evt, item) {
+            evt.dataTransfer.dropEffect = 'move'
+            evt.dataTransfer.effectAllowed = 'move'
+            evt.dataTransfer.setData('itemID', item.id)
+          },
+        onDrop(evt, list) {
+            const itemID = evt.dataTransfer.getData('itemID')
+            const item = this.items.find((item) => item.id == itemID)
+            item.list = list
+        },
+        
     }
 })
 
