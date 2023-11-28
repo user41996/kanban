@@ -1,362 +1,374 @@
-let eventBus = new Vue();
+let eventBus = new Vue()
 
-Vue.component('board', {
+// компонент со отображением всех колонок и всего что есть
+Vue.component('cols', {
     template:`
-        <div class="tabs">
-            <newBoard></newBoard>
-            <div class="tabs-wrap">
-                <table_1 :column_1="column_1" draggable @dragstart="startDrag($event, item)"></table_1>
-                <table_2 :column_2="column_2"  @drop="onDrop($event, index)" @dragover.prevent @dragenter.prevent></table_2>
-                <table_3 :column_3="column_3"></table_3>
-                <table_4 :column_4="column_4"></table_4>
-            </div>   
+    <div id="cols">
+        <!--вызов компонента который создаёт карточки-->
+        <newcard></newcard>
+        <div class="cols__content">
+        <!--вызов компонентов колонок с карточками-->
+            <col1 :column1="column1"></col1>
+            <col2 :column2="column2"></col2>
+            <col3 :column3="column3"></col3>
+            <col4 :column4="column4"></col4>
         </div>
-    `,
-    data(){
-        return{
-            column_1:[],
-            column_2:[],
-            column_3:[],
-            column_4:[],
+    </div>
+`,
+    data() {
+        return {
+            column1: [],
+            column2: [],
+            column3: [],
+            column4: [],
         }
     },
-    mounted(){
-        this.column_1 = JSON.parse(localStorage.getItem("column_1")) || [];
-        this.column_2 = JSON.parse(localStorage.getItem("column_2")) || [];
-        this.column_3 = JSON.parse(localStorage.getItem("column_3")) || [];
-        this.column_4 = JSON.parse(localStorage.getItem("column_4")) || [];
-        eventBus.$on('addColumn_1', tab => {
-            this.column_1.push(tab);
-            this.saveTab_1();
+    methods: {
+        saveColumnData() {
+            // Сохранение данных всех колонок в localStorage
+            localStorage.setItem('column1', JSON.stringify(this.column1));
+            localStorage.setItem('column2', JSON.stringify(this.column2));
+            localStorage.setItem('column3', JSON.stringify(this.column3));
+            localStorage.setItem('column4', JSON.stringify(this.column4));
+        },
+    },
+    // методы для добавления карточек в соответствующие колонки, ничего не сохраняется
+    mounted() {
+        // eventBus.$on('addColumn1', card => {
+        //     this.column1.push(card)
+        // })
+        // eventBus.$on('addColumn2', card => {
+        //     this.column2.push(card)
+        // })
+        // eventBus.$on('addColumn3', card => {
+        //     this.column3.push(card)
+        // })
+        // //проверка на дату и добавление в свою колонку
+        // eventBus.$on('addColumn4', card => {
+        //     this.column4.push(card)
+        //     if (card.date > card.deadline) {
+        //         card.current = false
+        //     }
+        // })
+        // Восстановление данных из localStorage при загрузке страницы
+        this.column1 = JSON.parse(localStorage.getItem('column1')) || [];
+        this.column2 = JSON.parse(localStorage.getItem('column2')) || [];
+        this.column3 = JSON.parse(localStorage.getItem('column3')) || [];
+        this.column4 = JSON.parse(localStorage.getItem('column4')) || [];
+
+        eventBus.$on('addColumn1', card => {
+            this.column1.push(card);
+            this.saveColumnData(); // Сохранение данных в localStorage
         });
-        eventBus.$on('addColumn_2', tab => {
-            this.column_2.push(tab);
-            this.saveTab_2();
+        eventBus.$on('addColumn2', card => {
+            this.column2.push(card);
+            this.saveColumnData(); // Сохранение данных в localStorage
         });
-        eventBus.$on('addColumn_3', tab => {
-            this.column_3.push(tab);
-            this.saveTab_3();
+        eventBus.$on('addColumn3', card => {
+            this.column3.push(card);
+            this.saveColumnData(); // Сохранение данных в localStorage
         });
-        eventBus.$on('addColumn_4', tab => {
-            this.column_4.push(tab);
-            if (tab.date > tab.deadline){
-                tab.term = false;
+        //проверка на дату и добавление в свою колонку
+        eventBus.$on('addColumn4', card => {
+            this.column4.push(card);
+            if (card.date > card.deadline) {
+                card.current = false;
             }
-            this.saveTab_4();
+            this.saveColumnData(); // Сохранение данных в localStorage
         });
     },
-    watch: {
-        column_1(newValue) {
-            localStorage.setItem("column_1", JSON.stringify(newValue));
-        },
-        column_2(newValue) {
-            localStorage.setItem("column_2", JSON.stringify(newValue));
-        },
-        column_3(newValue) {
-            localStorage.setItem("column_3", JSON.stringify(newValue));
-        },
-        column_4(newValue) {
-            localStorage.setItem("column_4", JSON.stringify(newValue));
-        }
-    },
-    methods:{
-        saveTab_1(){
-            localStorage.setItem('column_1', JSON.stringify(this.column_1));
-        },
-        saveTab_2(){
-            localStorage.setItem('column_2', JSON.stringify(this.column_2));
-        },
-        saveTab_3(){
-            localStorage.setItem('column_3', JSON.stringify(this.column_3));
-        },
-        saveTab_4(){
-            localStorage.setItem('column_4', JSON.stringify(this.column_4));
-        },
-        startDrag(evt, item) {
-            evt.dataTransfer.dropEffect = 'move'
-            evt.dataTransfer.effectAllowed = 'move'
-            evt.dataTransfer.setData('itemID', item.id)
-          },
-        onDrop(evt, list) {
-            const itemID = evt.dataTransfer.getData('itemID')
-            const item = this.items.find((item) => item.id == itemID)
-            item.list = list
-        },
-        
-    }
 })
 
-Vue.component('table_1',{
-    props: {
-        column_1: {
-            type: Array,
-        },
-        tab: {
-            type: Object
-        },
-    },
-    template:`
-        <div class="tab">
-            <h2>Запланированные задачи</h2>
-            <ul class="tab-li">
-                <li v-for="tab in column_1">
-                    <div class="separator"></div>
-                    <a @click="deleteTab(tab)">Удалить</a> &emsp; <a @click="tab.editButton = true">Редактировать</a><br>
-                    <p class="tab-title">{{tab.title}}</p>
-                    <ul class="tab-task">
-                        <li>Описание: {{tab.description}}</li>
-                        <li>Дата создания: {{tab.date}}</li>
-                        <li>Дедлайн: {{tab.deadline}}</li>
-                        <li v-if="tab.edit != null">Последние изменение: {{tab.edit}}</li>
-                        <li v-if="tab.editButton === true">
-                            <form @submit.prevent="updateTab(tab)">
-                                <label for="title">Новый заголовок</label>
-                                <input id="title" type="text" v-model="tab.title" maxlength="30" placeholder="Заголовок">
-                                <label for="description">Новое описание:</label> 
-                                <textarea id="description" v-model="tab.description" cols="20" rows="5"></textarea>
-                                <input type="submit" value="Редактировать">
-                            </form>                      
-                        </li>
-                    </ul>
-                    <a @click="nextTab(tab)">Следующая колонка</a>
-                </li>
-            </ul>
-        </div>
-    `,
-    methods: {
-        nextTab(tab){
-            this.column_1.splice(this.column_1.indexOf(tab), 1);
-            eventBus.$emit('addColumn_2', tab);
-        },
-        deleteTab(tab){
-            this.column_1.splice(this.column_1.indexOf(tab), 1);
-        },
-        updateTab(tab){
-            tab.editButton = false;
-            this.column_1.push(tab);
-            this.column_1.splice(this.column_1.indexOf(tab), 1);
-            tab.edit = new Date().toLocaleString();
-        }
-    }
-})
-
-Vue.component('table_2',{
-    props: {
-        column_2: {
-            type: Array,
-        },
-        tab: {
-            type: Object
-        },
-    },
-    template:`
-        <div class="tab">
-            <h2>Задачи в работе</h2>
-            <ul class="tab-li">
-                <li v-for="tab in column_2">
-                    <div class="separator"></div>
-                    <a @click="tab.editButton = true">Редактировать</a><br>
-                    <p class="tab-title">{{tab.title}}</p>
-                    <ul class="tab-task">
-                        <li>Описание: {{tab.description}}</li>
-                        <li>Дата создания: {{tab.date}}</li>
-                        <li>Дедлайн: {{tab.deadline}}</li>
-                        <li v-if="tab.reason != null" v-for="res in tab.reason">Проблема: {{res}}</li>
-                        <li v-if="tab.edit != null">Последние изменение: {{tab.edit}}</li>
-                        <li v-if="tab.editButton === true">
-                            <form @submit.prevent="updateTab(tab)">
-                                <label for="title">Новый заголовок</label>
-                                <input id="title" type="text" v-model="tab.title" maxlength="30" placeholder="Заголовок">
-                                <label for="description">Новое описание:</label> 
-                                <textarea id="description" v-model="tab.description" cols="20" rows="5"></textarea>
-                                <input type="submit" value="Редактировать">
-                            </form>                      
-                        </li>
-                    </ul>
-                    <a @click="nextTab(tab)">Следующая колонка</a>
-                </li>
-            </ul>
-        </div>
-    `,
-    methods:{
-        nextTab(tab){
-            this.column_2.splice(this.column_2.indexOf(tab), 1);
-            eventBus.$emit('addColumn_3', tab);
-        },
-        updateTab(tab){
-            tab.editButton = false;
-            this.column_2.push(tab);
-            this.column_2.splice(this.column_2.indexOf(tab), 1);
-            tab.edit = new Date().toLocaleString();
-        }
-    }
-})
-
-Vue.component('table_3',{
-    props: {
-        column_3: {
-            type: Array
-        },
-        tab: {
-            type: Object
-        },
-    },
-    template:`
-        <div class="tab">
-            <h2>Тестирование</h2>
-            <ul class="tab-li">
-                <li v-for="tab in column_3">
-                    <div class="separator"></div>
-                    <a @click="tab.editButton = true">Редактировать</a><br>
-                    <p class="tab-title">{{tab.title}}</p>
-                    <ul class="tab-task">
-                        <li>Описание: {{tab.description}}</li>
-                        <li>Дата создания: {{tab.date}}</li>
-                        <li>Дедлайн: {{tab.deadline}}</li>
-                        <li v-if="tab.reason != null" v-for="res in tab.reason">Проблема: {{res}}</li>
-                        <li v-if="tab.edit != null">Последние изменение: {{tab.edit}}</li>
-                        <li v-if="tab.editButton === true">
-                            <form @submit.prevent="updateTab(tab)">
-                                <label for="title">Новый заголовок</label>
-                                <input id="title" type="text" v-model="tab.title" maxlength="30" placeholder="Заголовок">
-                                <label for="description">Новое описание:</label> 
-                                <textarea id="description" v-model="tab.description" cols="20" rows="5"></textarea>
-                                <input type="submit" value="Редактировать">
-                            </form>                      
-                        </li>
-                        <li v-if="tab.refund">
-                            <form @submit.prevent="refundTab(tab)">
-                                <label for="reason">Причина: &emsp;</label> 
-                                <textarea id="reason" v-model="reason"></textarea>
-                                <input type="submit" value="Отправить">
-                            </form>
-                        </li>
-                    </ul>
-                    <a @click="tab.refund = true">Вернуть</a> &emsp; <a @click="nextTab(tab)">Следующая колонка</a>
-                </li>
-            </ul>
-        </div>
-    `,
-    data(){
-        return{
-            reason:[],
-        }
-    },
-    methods: {
-        nextTab(tab){
-            this.column_3.splice(this.column_3.indexOf(tab), 1);
-            eventBus.$emit('addColumn_4', tab);
-        },
-        refundTab(tab){
-            tab.reason.push(this.reason)
-            tab.refund = false
-            this.column_3.splice(this.column_3.indexOf(tab), 1);
-            eventBus.$emit('addColumn_2', tab);
-            this.reason = '';
-        },
-        updateTab(tab){
-            tab.editButton = false;
-            this.column_3.push(tab);
-            this.column_3.splice(this.column_3.indexOf(tab), 1);
-            tab.edit = new Date().toLocaleString();
-        },
-    }
-})
-
-Vue.component('table_4',{
-    props: {
-        column_4: {
-            type: Array,
-        },
-        tab: {
-            type: Object
-        },
-    },
-    template:`
-        <div class="tab">
-            <h2>Выполненные задачи</h2>
-            <ul class="tab-li">
-                <li v-for="tab in column_4">
-                    <div class="separator"></div>
-                    <p class="tab-title">{{tab.title}}</p>
-                    <ul class="tab-task">
-                        <li>Описание: {{tab.description}}</li>
-                        <li>Дата создания: {{tab.date}}</li>
-                        <li>Дедлайн: {{tab.deadline}}</li>
-                        <li v-if="tab.edit != null">Последние изменение: {{tab.edit}}</li>
-                        <li v-if="tab.term">Завершено в срок</li>
-                        <li v-else>В срок не завершено</li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    `,
-})
-
-Vue.component('newBoard', {
-    template:`
-        <section  class="section-modal">
-            <button type="button" class="button" @click="show=true">Создать задачу</button>
-            <div class="modal" v-if="show">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <slot name="header">
-                                <button class="close" type="button" @click="close">×</button>
-                            </slot>
-                        </div>
-                        <div class="modal-body">
-                            <slot name="body">
-                                <div class="create_form">
-                                    <form class="create" @submit.prevent="onSubmit">
-                                        <label for="title">Заголовок</label>
-                                        <input id="title" v-model="title" type="text" placeholder="Заголовок" required maxlength="30">   
-                                        <label for="description">Описание</label>
-                                        <textarea id="description" v-model="description" rows="5" columns="10" required maxlength="60"></textarea>
-                                        <label for="deadline">Дедлайн</label>
-                                        <input id="deadline" type="date" v-model="deadline" placeholder="дд.мм.гггг" required>        
-                                        <button type="submit">Создать</button>
-                                    </form>
-                                </div>
-                            </slot>  
-                        </div>
-                    </div>
-                </div>
+Vue.component('col1', {
+    template: `
+        <div class="col">
+            <h2>Planned tasks</h2>
+            <li class="cards" style="background-color: #e79ba2" v-for="card in column1">
+            
+                <a @click="deleteCard(card)">Delete</a>   
+                
+                <a @click="card.editB = true">Edit</a> <br>
+                
+                <p class="card-title">{{card.title}}</p>
+                <ul>
+                    <li class="tasks">Description: {{card.description}}</li>
+                    <li class="tasks">Date of creation:
+                    {{ card.date }}</li>
+                    <li class="tasks">Deadline: {{card.deadline}}</li>
+                    <li class="tasks" v-if="card.edit != null">Last change: {{ card.edit}}</li>
+                    <li class="tasks" v-if="card.editB">
+                        <form @submit.prevent="updateTask(card)">
+                            <p>New title: 
+                                <input type="text" v-model="card.title" maxlength="30" placeholder="Заголовок">
+                            </p>
+                            <p>New description: 
+                                <textarea v-model="card.description" cols="20" rows="5"></textarea>
+                            </p>
+                            <p>
+                                <input type="submit" value="Edit">
+                            </p>
+                        </form>
+                    </li>
+                </ul>
+                <a @click="nextcol(card)">Next Column</a>
             </div>
-        </section>
+        </div>
     `,
-    data(){
-        return{
+    props: {
+        column1: {
+            type: Array,
+        },
+        column2: {
+            type: Array,
+        },
+        card: {
+            type: Object
+        },
+        errors: {
+            type: Array
+        }
+    },
+    methods: {
+        nextcol(card) {
+            this.column1.splice(this.column1.indexOf(card), 1)
+            eventBus.$emit('addColumn2', card)
+        },
+        deleteCard(card) {
+            this.column1.splice(this.column1.indexOf(card), 1)
+        },
+        updateTask(card){
+            card.editB = false
+            this.column1.push(card)
+            this.column1.splice(this.column1.indexOf(card), 1)
+            card.edit = new Date().toLocaleString()
+        }
+
+    },
+    computed: {
+
+    },
+})
+
+Vue.component('col2', {
+    template: `
+        <div class="col">
+            <h2>Tasks in progress</h2>
+            <li class="cards" style="background-color: lightblue" v-for="card in column2">
+                <a @click="card.editB = true">Edit</a> <br>
+                <p class="card-title">{{card.title}}</p>
+                <ul>
+                    <li class="tasks">Description: {{card.description}}</li>
+                    <li class="tasks">Date of creation:
+                    {{ card.date }}</li>
+                    <li class="tasks">Deadline: {{card.deadline}}</li>
+                    <li class="tasks" v-if="card.reason != null">Reason of transfer: {{ card.reason }}</li>
+                    <li class="tasks" v-if="card.edit != null">Last change: {{ card.edit}}</li>
+                    <li class="tasks" v-if="card.editB">
+                        <form @submit.prevent="updateTask(card)">
+                            <p>New title: 
+                                <input type="text" v-model="card.title" maxlength="30" placeholder="Заголовок">
+                            </p>
+                            <p>New description: 
+                                <textarea v-model="card.description" cols="20" rows="5"></textarea>
+                            </p>
+                            <p>
+                                <input type="submit" value="Edit">
+                            </p>
+                        </form>
+                    </li>
+                </ul>
+                <a @click="nextcol(card)">Next Column</a>
+            </div>
+        </div>
+    `,
+    props: {
+        column2: {
+            type: Array,
+        },
+        card: {
+            type: Object
+        }
+    },
+    methods: {
+        nextcol(card) {
+            this.column2.splice(this.column2.indexOf(card), 1)
+            eventBus.$emit('addColumn3', card)
+        },
+        updateTask(card){
+            card.edit = new Date().toLocaleString()
+            card.editB = false
+            this.column2.push(card)
+            this.column2.splice(this.column2.indexOf(card), 1)
+        }
+    }
+})
+
+Vue.component('col3', {
+    template: `
+        <div class="col"> 
+            <h2>Testing</h2>
+            <li class="cards" style="background-color: #f5f287" v-for="card in column3" >
+                <a @click="card.editB = true">Edit</a> <br>
+                <p class="card-title">{{card.title}}</p>
+                <ul>
+                    <li class="tasks">Description: {{card.description}}</li>
+                    <li class="tasks">Date of creation:
+                    {{ card.date }}</li>
+                    <li class="tasks">Deadline: {{card.deadline}}</li>
+                    <li class="tasks" v-if="card.reason != null">Reason of transfer: {{ card.reason }}</li>
+                    <li class="tasks" v-if="card.edit != null">Last change: {{ card.edit}}</li>
+                    <li class="tasks" v-if="card.editB">
+                        <form @submit.prevent="updateTask(card)">
+                            <p>New title: 
+                                <input type="text" v-model="card.title" maxlength="30" placeholder="Заголовок">
+                            </p>
+                            <p>New description: 
+                                <textarea v-model="card.description" cols="20" rows="5"></textarea>
+                            </p>
+                            <p>
+                                <input type="submit" value="Edit">
+                            </p>
+                        </form>
+                    </li>
+                    <li class="tasks" v-if="card.transfer">
+                        <form @submit.prevent="lastcol(card)">
+                            <p>The reason of transfer:
+                                <input type="text" v-model="card.reason">
+                            </p>
+                            <p>
+                                <input type="submit" value="OK">
+                            </p>
+                        </form>
+                    </li>
+                </ul>
+                <a @click="card.transfer = true">Last Column</a>  | <a @click="nextcol(card)">Next Column</a>
+            </div>
+        </div>
+    `,
+    props: {
+        column3: {
+            type: Array,
+        },
+        card: {
+            type: Object
+        }
+    },
+    methods: {
+        nextcol(card) {
+            this.column3.splice(this.column3.indexOf(card), 1)
+            eventBus.$emit('addColumn4', card)
+        },
+        lastcol(card) {
+            card.transfer = false
+            this.column3.splice(this.column3.indexOf(card), 1)
+            eventBus.$emit('addColumn2', card)
+        },
+        updateTask(card){
+            card.edit = new Date().toLocaleString()
+            card.editB = false
+            this.column3.push(card)
+            this.column3.splice(this.column3.indexOf(card), 1)
+        }
+    }
+})
+
+Vue.component('col4', {
+    template: `
+        <div class="col">
+            <h2>Completed tasks</h2>
+            <div class="cards" style="background-color: lightgreen" v-for="card in column4">
+                <p class="card-title">{{card.title}}</p>
+                <ul>
+                    <li class="tasks">Description: {{card.description}}</li>
+                    <li class="tasks">Date of creation:
+                    {{ card.date }}</li>
+                    <li class="tasks">Deadline: {{card.deadline}}</li>
+                    
+                    <li class="tasks" v-if="card.current"> Сompleted on time</li>
+                    <li class="tasks" v-else>Not completed on time</li>
+                </ul>
+            </div>
+        </div>
+    `,
+    props: {
+        column4: {
+            type: Array,
+        },
+        card: {
+            type: Object
+        }
+    },
+    methods: {
+
+    },
+
+    computed:  {
+
+    },
+})
+
+
+Vue.component('newcard', {
+    template: `
+    <section>
+    <!-- openModal - id модального окна (элемента div) -->
+    <a href="#openModal" class="btn btnModal">Create card</a>
+    <div id="openModal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Fill out the card</h3>
+            <a href="#close" title="Close" class="close">×</a>
+        </div>
+        <div class="modal-body">    
+    
+        <form class="addform" @submit.prevent="onSubmit">
+            <p>
+                <label for="intitle">Title</label>
+                <input id="intitle" required v-model="title" maxlength="30" type="text" placeholder="title">
+            </p>
+            <label for="indescription">Description</label>
+            <textarea required id="indescription" rows="5" columns="10" v-model="description" maxlength="60"> </textarea>
+            <label for="indeadline">Deadline</label>
+            <input required type="date" required placeholder="дд.мм.гггг" id="indeadline" v-model="deadline">
+            <button type="submit">Add a card</button>
+        </form>
+        
+        </div>
+        </div>
+    </div>
+    </div>
+    </section>
+    `,
+    data() {
+        return {
             title: null,
             description: null,
-            date:null,
+            date: null,
             deadline: null,
-            show: false,
-            reason: [],
         }
     },
-    methods:{
-        onSubmit(){
-            let tab = {
+    methods: {
+        onSubmit() {
+            let card = {
                 title: this.title,
                 description: this.description,
-                date: new Date().toLocaleDateString().split('.').reverse().join('-'),
+                date: new Date().toLocaleDateString().split(".").reverse().join("-"),
                 deadline: this.deadline,
+                reason: null,
+                transfer: false,
                 edit: null,
-                editButton: false,
-                refund: false,
-                term: true,
-                reason: [],
+                editB: false,
+                comdate: null,
+                current: true,
+
             }
-            eventBus.$emit('addColumn_1', tab);
-            this.title = null;
-            this.description = null;
-            this.date = null;
-            this.deadline = null;
-            this.show = false;
-        },
-        close(){
-            this.show = false;
+            eventBus.$emit('addColumn1', card)
+            this.title = null
+            this.description = null
+            this.date = null
+            this.deadline = null
+            console.log(card)
         }
     }
 })
@@ -364,5 +376,10 @@ Vue.component('newBoard', {
 
 let app = new Vue({
     el: '#app',
-    
+    data: {
+        name: 'Kanban'
+    },
+    methods: {
+
+    }
 })
