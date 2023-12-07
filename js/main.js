@@ -2,7 +2,7 @@ let eventBus = new Vue()
 
 // компонент со отображением всех колонок и всего что есть
 Vue.component('cols', {
-    template:`
+    template: `
     <div id="cols">
         <!--вызов компонента который создаёт карточки-->
         <newcard></newcard>
@@ -34,22 +34,6 @@ Vue.component('cols', {
     },
     // методы для добавления карточек в соответствующие колонки, ничего не сохраняется
     mounted() {
-        // eventBus.$on('addColumn1', card => {
-        //     this.column1.push(card)
-        // })
-        // eventBus.$on('addColumn2', card => {
-        //     this.column2.push(card)
-        // })
-        // eventBus.$on('addColumn3', card => {
-        //     this.column3.push(card)
-        // })
-        // //проверка на дату и добавление в свою колонку
-        // eventBus.$on('addColumn4', card => {
-        //     this.column4.push(card)
-        //     if (card.date > card.deadline) {
-        //         card.current = false
-        //     }
-        // })
         // Восстановление данных из localStorage при загрузке страницы
         this.column1 = JSON.parse(localStorage.getItem('column1')) || [];
         this.column2 = JSON.parse(localStorage.getItem('column2')) || [];
@@ -83,7 +67,7 @@ Vue.component('col1', {
     template: `
         <div class="col">
             <h2>Planned tasks</h2>
-            <li class="cards" style="background-color: #e79ba2" v-for="card in column1">
+            <li class="cards" v-for="card in column1">
             
                 <a @click="deleteCard(card)">Delete</a>   
                 
@@ -111,6 +95,7 @@ Vue.component('col1', {
                     </li>
                 </ul>
                 <a @click="nextcol(card)">Next Column</a>
+                </li>
             </div>
         </div>
     `,
@@ -136,7 +121,7 @@ Vue.component('col1', {
         deleteCard(card) {
             this.column1.splice(this.column1.indexOf(card), 1)
         },
-        updateTask(card){
+        updateTask(card) {
             card.editB = false
             this.column1.push(card)
             this.column1.splice(this.column1.indexOf(card), 1)
@@ -144,16 +129,14 @@ Vue.component('col1', {
         }
 
     },
-    computed: {
-
-    },
+    computed: {},
 })
 
 Vue.component('col2', {
     template: `
         <div class="col">
             <h2>Tasks in progress</h2>
-            <li class="cards" style="background-color: lightblue" v-for="card in column2">
+            <li class="cards" v-for="card in column2">
                 <a @click="card.editB = true">Edit</a> <br>
                 <p class="card-title">{{card.title}}</p>
                 <ul>
@@ -178,6 +161,7 @@ Vue.component('col2', {
                     </li>
                 </ul>
                 <a @click="nextcol(card)">Next Column</a>
+                </li>
             </div>
         </div>
     `,
@@ -194,7 +178,7 @@ Vue.component('col2', {
             this.column2.splice(this.column2.indexOf(card), 1)
             eventBus.$emit('addColumn3', card)
         },
-        updateTask(card){
+        updateTask(card) {
             card.edit = new Date().toLocaleString()
             card.editB = false
             this.column2.push(card)
@@ -207,7 +191,7 @@ Vue.component('col3', {
     template: `
         <div class="col"> 
             <h2>Testing</h2>
-            <li class="cards" style="background-color: #f5f287" v-for="card in column3" >
+            <li class="cards" v-for="card in column3" >
                 <a @click="card.editB = true">Edit</a> <br>
                 <p class="card-title">{{card.title}}</p>
                 <ul>
@@ -242,6 +226,7 @@ Vue.component('col3', {
                     </li>
                 </ul>
                 <a @click="card.transfer = true">Last Column</a>  | <a @click="nextcol(card)">Next Column</a>
+                </li>
             </div>
         </div>
     `,
@@ -263,7 +248,7 @@ Vue.component('col3', {
             this.column3.splice(this.column3.indexOf(card), 1)
             eventBus.$emit('addColumn2', card)
         },
-        updateTask(card){
+        updateTask(card) {
             card.edit = new Date().toLocaleString()
             card.editB = false
             this.column3.push(card)
@@ -276,7 +261,7 @@ Vue.component('col4', {
     template: `
         <div class="col">
             <h2>Completed tasks</h2>
-            <div class="cards" style="background-color: lightgreen" v-for="card in column4">
+            <div class="cards" v-for="card in column4">
                 <p class="card-title">{{card.title}}</p>
                 <ul>
                     <li class="tasks">Description: {{card.description}}</li>
@@ -298,13 +283,9 @@ Vue.component('col4', {
             type: Object
         }
     },
-    methods: {
+    methods: {},
 
-    },
-
-    computed:  {
-
-    },
+    computed: {},
 })
 
 
@@ -379,7 +360,5 @@ let app = new Vue({
     data: {
         name: 'Kanban'
     },
-    methods: {
-
-    }
+    methods: {}
 })
